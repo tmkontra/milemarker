@@ -1,4 +1,4 @@
-package controller
+package http
 
 import service.ClientService
 import zio.ZIO
@@ -6,13 +6,17 @@ import zio.http.*
 import zio.http.codec.{HttpCodec, PathCodec}
 import zio.http.endpoint.Endpoint
 
-object ClientController {
+class ClientRoutes(val prefix: PathCodec[_]) extends Router[ClientService] {
 
   type Env = ClientService
 
-  val indexRoute = Endpoint(RoutePattern.GET).out[String]
+  private val indexRoute =
+    Endpoint(RoutePattern.GET / prefix)
+      .out[String]
 
-  def apply(): Routes[Env, Nothing] =
+  def endpoints = Seq(indexRoute)
+
+  def routes: Routes[Env, Response] =
     Routes(
       indexRoute.implement(_ => ZIO.service[ClientService].map(_.show()))
     )
