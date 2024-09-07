@@ -6,6 +6,6 @@ import storage.ClientRepository
 
 @Component
 class ClientService @Autowired()(val repo: ClientRepository) {
-  def show(): Unit =
-    println(repo.show)
+  def show(): String =
+    repo.show
 }

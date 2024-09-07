@@ -1,5 +1,6 @@
 package run
 
+import controller.ClientController
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
@@ -11,6 +12,7 @@ import service.ClientService
 import storage.{Client, ClientRepository}
 import zio.*
 import zio.Console.*
+import zio.http.Server
 
 import java.io.IOException
 import scala.jdk.CollectionConverters.*
@@ -28,7 +30,7 @@ object Application extends ZIOAppDefault:
         ctx <- managedSpringApp(List.empty)
         _ <- printLine("milemarker!")
         s = ctx.getBean(classOf[ClientService])
-        _ <- ZIO.succeed(s.show())
+        _ <- Server.serve(ClientController()).provide(Server.default ++ ZLayer.succeed(s))
       } yield ()
     }
 
