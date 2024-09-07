@@ -12,7 +12,8 @@ lazy val root = (project in file("."))
       "org.springframework.boot" % "spring-boot-starter-data-jpa" % "3.3.3",
       "org.springframework.data" % "spring-data-jdbc" % "3.3.3",
       "org.postgresql" % "postgresql" % "42.7.2",
-      "dev.zio" %% "zio-http" % "3.0.0-RC9"
+      "dev.zio" %% "zio-http" % "3.0.0-RC9",
+      "dev.zio" %% "zio-schema-json" % "1.4.1"
     ),
     testFrameworks += new TestFramework("zio.test.sbt.ZTestFramework")
   )
