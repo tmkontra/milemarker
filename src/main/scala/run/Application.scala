@@ -30,7 +30,11 @@ object Application extends ZIOAppDefault:
         ctx <- managedSpringApp(List.empty)
         _ <- printLine("milemarker!")
         s = ctx.getBean(classOf[ClientService])
-        _ <- Server.serve(MilemarkerServer()).provide(Server.default ++ ZLayer.succeed(s) ++ ZLayer.succeed(DeliverableService.live))
+        _ <- Server.serve(MilemarkerServer())
+          .provide(
+            ZLayer.succeed(Server.Config.default.port(8000)) >>> Server.live ++
+              ZLayer.succeed(s) ++
+              ZLayer.succeed(DeliverableService.live))
       } yield ()
     }
 

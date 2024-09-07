@@ -29,7 +29,7 @@ class ClientRoutes(val prefix: PathCodec[_]) extends Router[ClientService] {
   def routes: Routes[Env, Response] =
     Routes(
       indexRoute.implement(_ => ZIO.service[ClientService].map(_.repo.findAll().iterator().asScala.map(Client.fromStorage).toList)),
-      createRoute.implement(input => ZIO.service[ClientService].map(_.repo.save(input._2.toStorage.noId)).map(Client.fromStorage))
+      createRoute.implement(input => ZIO.service[ClientService].map(_.save(input._2.toStorage.noId)).map(Client.fromStorage))
     )
 }
 

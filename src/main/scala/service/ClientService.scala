@@ -7,6 +7,6 @@ import storage.{Client, ClientRepository}
 @Component
 class ClientService @Autowired()(val repo: ClientRepository) {
 
-  def save(name: String): Client =
-    repo.save(Client(name=name))
+  def save(client: Client): Client =
+    repo.save(Client(client.name))
 }
