@@ -1,0 +1,12 @@
+services:
+  db:
+    image: postgres:14
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    ports:
+      - "15432:5432"
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=milemarker
+      - POSTGRES_DB=milemarker
+      - LANG=C.UTF-8
