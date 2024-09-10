@@ -9,7 +9,7 @@ import org.springframework.context.annotation.{ComponentScan, Import}
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import run.Application.Environment
 import service.{ClientService, DeliverableService}
-import storage.{Client, ClientRepository}
+import storage.{Client, ClientRepository, DeliverableRepository}
 import zio.*
 import zio.Console.*
 import zio.http.Server
@@ -27,14 +27,16 @@ object Application extends ZIOAppDefault:
   override def run: ZIO[Environment & ZIOAppArgs & Scope, Any, Any] =
     ZIO.scoped {
       for {
-        ctx <- managedSpringApp(List.empty)
+        appArgs <- getArgs
+        ctx <- managedSpringApp(appArgs.toList)
         _ <- printLine("milemarker!")
-        s = ctx.getBean(classOf[ClientService])
+        s = ctx.getBean(classOf[ClientRepository])
+        d = ctx.getBean(classOf[DeliverableRepository])
         _ <- Server.serve(MilemarkerServer())
           .provide(
             ZLayer.succeed(Server.Config.default.port(8000)) >>> Server.live ++
               ZLayer.succeed(s) ++
-              ZLayer.succeed(DeliverableService.live))
+              ZLayer.succeed(d))
       } yield ()
     }
 

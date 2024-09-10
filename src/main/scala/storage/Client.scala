@@ -1,7 +1,7 @@
 package storage
 
+import jakarta.annotation.Nonnull
 import jakarta.persistence.*
-import org.springframework.data.repository.CrudRepository
 
 @Entity
 class Client {
@@ -9,6 +9,7 @@ class Client {
   @GeneratedValue(strategy = GenerationType.AUTO)
   var id: Long = 0L
 
+  @Nonnull
   var name: String = _
 
   def noId: Client = {
@@ -25,5 +26,4 @@ object Client {
   }
 }
 
-trait ClientRepository extends CrudRepository[Client, Long] {
-}
+

@@ -1,6 +1,7 @@
 package http
 
-import zio.http.Routes
+import service.{ClientService, DeliverableService}
+import zio.http.{Response, Routes}
 import zio.http.codec.PathCodec
 import zio.http.endpoint.openapi.{OpenAPIGen, SwaggerUI}
 
@@ -9,14 +10,14 @@ object MilemarkerServer {
 
   private val apiPrefix = "v0"
 
-  val routers = Seq(
+  private val routers = Seq(
     ClientRoutes(apiPrefix / "client"),
     DeliverableRoutes(apiPrefix / "deliverable")
   )
 
-  def endpoints = routers.flatMap(_.endpoints)
+  private def endpoints = routers.flatMap(_.endpoints)
 
-  def openapi = OpenAPIGen.fromEndpoints(title="Milemarker API", version="0.1", endpoints)
+  private def openapi = OpenAPIGen.fromEndpoints(title="Milemarker API", version="0.1", endpoints)
 
   def apply() =
       routers.map(_.routes).reduce(_ ++ _) ++

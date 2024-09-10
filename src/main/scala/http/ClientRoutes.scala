@@ -1,6 +1,7 @@
 package http
 
 import service.ClientService
+import storage.ClientRepository
 import zio.ZIO
 import zio.http.*
 import zio.http.codec.PathCodec
@@ -10,10 +11,9 @@ import zio.schema.*
 
 import scala.jdk.CollectionConverters.*
 
-class ClientRoutes(val prefix: PathCodec[_]) extends Router[ClientService] {
-  import ClientRoutes.*
 
-  type Env = ClientService
+class ClientRoutes(val prefix: PathCodec[_]) extends Router[ClientRoutes.Env] {
+  import ClientRoutes.*
 
   private val indexRoute =
     Endpoint(RoutePattern.GET / prefix)
@@ -28,12 +28,14 @@ class ClientRoutes(val prefix: PathCodec[_]) extends Router[ClientService] {
 
   def routes: Routes[Env, Response] =
     Routes(
-      indexRoute.implement(_ => ZIO.service[ClientService].map(_.repo.findAll().iterator().asScala.map(Client.fromStorage).toList)),
-      createRoute.implement(input => ZIO.service[ClientService].map(_.save(input._2.toStorage.noId)).map(Client.fromStorage))
+      indexRoute.implement(_ => ClientService.findAll().map(_.map(Client.fromStorage)).orDie),
+      createRoute.implement((_, input) => ClientService.create(input.toStorage).map(Client.fromStorage).orDie)
     )
 }
 
 object ClientRoutes {
+  type Env = ClientRepository
+
   case class Client(id: Long, name: String) {
     def toStorage: storage.Client = {
       val s = storage.Client(name = this.name)
